@@ -1,27 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record model="ir.actions.act_window" id="hospital_patient_action">
+<data>
+    <record id="hospital_asessment_form_simple" model="ir.ui.view">
+        <field name="name">hospital.asessment.form.simple</field>
+        <field name="model">hospital.assessment</field>
+        <field name="arch" type="xml">
+            <form>
+                <div class="oe_title">
+                    <h1><field name="name_seq"/></h1>
+                </div>
+                <group>
+                    <field name="note"/>
+                    <field name="state"/>
+                </group> 
+                <footer>
+                    <button string="Create" name="create_assessment" type="object" class="btn btn-primary"/>
+                    <button string="Cancel" special="cancel" class="btn btn-default"/>
+                </footer>     
+            </form>
+        </field>   
+    </record>
+
+    <record id="hospital_create_assessment_action" model="ir.actions.act_window" >
+        <field name="name">Create Assessment</field>
+        <field name="res_model">hospital.assessment</field>
+        <field name="view_type">form</field>
+        <field name="view_id" ref="hospital_asessment_form_simple"/>   
+        <field name="target">new</field>
+    </record>
+
+    <record id="hospital_patient_action" model="ir.actions.act_window" >
         <field name="name">Patients</field>
         <field name="res_model">hospital.patient</field>
     </record>
 
-   
-
-    <record model="ir.actions.act_window" id="hospital_assessment_action">
+    <record id="hospital_assessment_action" model="ir.actions.act_window" >
         <field name="name">Assessment</field>
-        <field name="res_model">hospital.assessment</field>
-        
+        <field name="res_model">hospital.assessment</field>        
     </record>
+
 
     <record id="hospital_patient_form" model="ir.ui.view">
         <field name="name">hospital.patient.form</field>
         <field name="model">hospital.patient</field>
         <field name="arch" type="xml">
             <form>
+                <header>
+                    <button name="%(hospital_create_assessment_action)d" string="Create assessment" type="action" class="oe_highlight" groups="hospital.group_hospital_doctor" context="{'default_patient_id' : active_id}" />
+                </header>
                 <sheet>
-                    <header></header>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="toggle_active" type="object" groups="hospital.group_hospital_manager"
+                                class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button"
+                                options='{"terminology": "archive"}'/>
+                        </button>
+                    </div>
                     <div class="oe_title">
-                        <h1><field name="name_seq"/></h1>
+                        <h1><field name="name_seq" /></h1>
                     </div>
                     <group>
                         <group>
@@ -56,8 +92,7 @@
 
     <record id="hospital_patient_tree" model="ir.ui.view">
         <field name="name">hospital.patient.tree</field>
-        <field name="model">hospital.patient</field>
-        
+        <field name="model">hospital.patient</field>   
         <field name="arch" type="xml">
             <tree>
                 <field name="name_seq"/>
@@ -71,7 +106,6 @@
     </record>
 
     
-  
 
     <record id="hospital_assessment_tree" model="ir.ui.view">
         <field name="name">hospital.assessment.tree</field>
@@ -88,5 +122,6 @@
 
     <menuitem id="hospital_root_menu" name="Hospital"/>
     <menuitem id="hospital_patient_menu" name="Patients" action="hospital_patient_action" parent="hospital_root_menu"/>
-    <menuitem id="hospital_assessment_menu" name="Assessments" action="hospital_assessment_action" parent="hospital_root_menu" />
+    <menuitem id="hospital_assessment_menu" name="Assessments" action="hospital_assessment_action" parent="hospital_root_menu" groups="hospital.group_hospital_manager"/>
+</data>
 </odoo>

@@ -8,7 +8,6 @@ class Assessment(models.Model):
     _rec_name = 'name_seq'
 
     name_seq = fields.Char('ID', required=True, readonly=True, default=lambda self: 'New') 
-    
     doctor_id = fields.Many2one('res.users', string="Doctor", required=True, default=lambda self: self.env.user, readonly=True)
     patient_id = fields.Many2one('hospital.patient', string="Patient", required=True)
     note = fields.Text('Notes', required=True)
@@ -19,18 +18,16 @@ class Assessment(models.Model):
         ('seriuos', 'Serious'),
         ('critical', 'Critical'),
         ('dead', 'Dead')
-    ], string='State determine', required=True)
+    ], string='State', required=True)
 
     @api.model
     def create(self, vals):
-        patient = self.env['hospital.patient'].browse(vals['patient_id'])
-        patient.sudo().write({'state': vals['state']})
-
         if vals.get('name_seq', 'New') == 'New':
             vals['name_seq'] = self.env['ir.sequence'].next_by_code('hospital.assessment.sequence') or 'New'
         return super(Assessment, self).create(vals)
     
- 
-    
-
+    @api.multi
+    def create_assessment(self):
+        self.patient_id.sudo().write({'state': self.state})
+        
         

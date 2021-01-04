@@ -22,10 +22,11 @@ class Patient(models.Model):
         ('seriuos', 'Serious'),
         ('critical', 'Critical'),
         ('dead', 'Dead')
-    ], string='State determine', readonly=True, default=lambda self: 'undetermined', required=True)
+    ], string='State', readonly=True, default=lambda self: 'undetermined', required=True)
     description = fields.Text('Description')
     doctor_id = fields.Many2one('res.users', string="Doctor")
     assessments = fields.One2many('hospital.assessment', 'patient_id', string='Assessments')
+    active = fields.Boolean('Active', default=True)
 
     @api.model
     def create(self, vals):
